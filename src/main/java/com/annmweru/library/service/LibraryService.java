@@ -6,24 +6,44 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LibraryService {
-     private List<Book> books = new ArrayList<Book>();
-    public  void addBook(Book newBook){
+    private List<Book> books = new ArrayList<Book>();
+
+    public void addBook(Book newBook) {
         String isbn = newBook.getIsbn();
-        if(bookExists(isbn)){
+        if (bookExists(isbn)) {
             System.out.println("The book already exists");
             return;
         }
         this.books.add(newBook);
-        System.out.println("The book Added successfully");
+        System.out.println("The book added successfully");
 
     }
-       private boolean  bookExists(String isbn) {
-            for (Book book :this.books) {
-          if (book.getIsbn().equals(isbn)){
-              return  true;
-          }
+
+    private boolean bookExists(String isbn) {
+        for (Book book : this.books) {
+            if (book.getIsbn().equals(isbn)) {
+                return true;
             }
-           return false;
-       };
+        }
+        return false;
+    };
 
-    }
+    public Book searchBook(String isbn){
+        for(Book book : this.books){
+            if(book.getIsbn().equals(isbn)){
+                return book;
+            }
+        }
+        return null;
+    };
+    public boolean deleteBook(String isbn){
+         Book mybook = this.searchBook(isbn);
+        if (mybook == null){
+            return false;
+        }
+             return books.remove(mybook);
+    };
+
+
+
+}
