@@ -1,5 +1,6 @@
 package com.annmweru.library.service;
 
+import com.annmweru.library.enums.BookStatus;
 import com.annmweru.library.model.Book;
 
 import java.util.ArrayList;
@@ -43,6 +44,21 @@ public class LibraryService {
         }
              return books.remove(mybook);
     };
+    public  boolean borrowBook(String isbn){
+        Book mybook = this.searchBook(isbn);
+        if (mybook == null){
+            return false;
+        }
+        if (mybook.getStatus() == BookStatus.BORROWED){
+            return false;
+        }
+        mybook.setStatus(BookStatus.BORROWED);
+        return true;
+
+
+
+
+    }
 
 
 
