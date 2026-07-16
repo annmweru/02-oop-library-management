@@ -10,20 +10,20 @@ public class Main {
         LibraryService library = new LibraryService();
         library.addBook(book1);
         library.addBook(book2);
-        boolean isDeleted = library.deleteBook(book1.getIsbn());
-        if (isDeleted){
-            System.out.println("Book deleted successfully.");
-        } else {
-            System.out.println("Book not found.");
-        }
-        Book myBook = library.searchBook("12345");
+//        boolean isDeleted = library.deleteBook(book1.getIsbn());
+//        if (isDeleted){
+//            System.out.println("Book deleted successfully.");
+//        } else {
+//            System.out.println("Book not found.");
+//        }
+        Book myBook = library.searchBook("67890");
 
         if(myBook == null){
             System.out.println("Book was not found.");
         } else {
             System.out.println("Book found: " + myBook);
         }
-        boolean isBorrowed = library.borrowBook(book1.getIsbn());
+        boolean isBorrowed = library.borrowBook(book2.getIsbn());
         if(isBorrowed){
             System.out.println("The book was successfully borrowed.");
         } else {
@@ -33,6 +33,13 @@ public class Main {
 
         System.out.println( "Book Status: " + myBook.getStatus());
 
+        boolean isReturned = library.returnBook(book2.getIsbn());
+        if(isReturned){
+            System.out.println("The book is available.");
+        } else {
+            System.out.println("Not available");
+        }
+        System.out.println(myBook.getStatus());
 
 
     }

@@ -54,12 +54,17 @@ public class LibraryService {
         }
         mybook.setStatus(BookStatus.BORROWED);
         return true;
-
-
-
+    }
+    public boolean returnBook(String isbn){
+        Book book = this.searchBook(isbn);
+        if(book == null){
+            return  false;
+        }
+        if(book.getStatus() == BookStatus.AVAILABLE){
+            return false;
+        }
+        book.setStatus(BookStatus.AVAILABLE);
+        return true;
 
     }
-
-
-
 }
