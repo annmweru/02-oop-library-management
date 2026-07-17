@@ -65,6 +65,28 @@ public class LibraryService {
         }
         book.setStatus(BookStatus.AVAILABLE);
         return true;
+    }
+    public  List<Book> listAllBooks(){
+        return this.books;
+    }
+    public  List<Book> listAllAvailable(){
+        List<Book> availableBooks = new ArrayList<>();
+        for(Book allAvailable: this.books){
+            if(allAvailable.getStatus() == BookStatus.AVAILABLE){
+                availableBooks.add(allAvailable);
+            }
+        }
+        return availableBooks;
+
+    }
+    public  List<Book> listAllBorrowed(){
+        List<Book> borrowedBooks = new ArrayList<>();
+        for(Book allBorrowed: this.books){
+            if(allBorrowed.getStatus() == BookStatus.BORROWED){
+                borrowedBooks.add(allBorrowed);
+            }
+        }
+        return borrowedBooks;
 
     }
 }
