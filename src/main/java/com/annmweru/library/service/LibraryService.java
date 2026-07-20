@@ -9,15 +9,13 @@ import java.util.List;
 public class LibraryService {
     private List<Book> books = new ArrayList<Book>();
 
-    public void addBook(Book newBook) {
+    public boolean addBook(Book newBook) {
         String isbn = newBook.getIsbn();
         if (bookExists(isbn)) {
-            System.out.println("The book already exists");
-            return;
+            return false;
         }
         this.books.add(newBook);
-        System.out.println("The book added successfully");
-
+            return true;
     }
 
     private boolean bookExists(String isbn) {
