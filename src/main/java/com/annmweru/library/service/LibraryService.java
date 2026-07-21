@@ -1,6 +1,10 @@
 package com.annmweru.library.service;
 
 import com.annmweru.library.enums.BookStatus;
+import com.annmweru.library.exception.BookAlreadyAvailableException;
+import com.annmweru.library.exception.BookAlreadyBorrowedException;
+import com.annmweru.library.exception.BookAlreadyExistsException;
+import com.annmweru.library.exception.BookNotFoundException;
 import com.annmweru.library.model.Book;
 
 import java.util.ArrayList;
@@ -9,15 +13,14 @@ import java.util.List;
 public class LibraryService {
     private List<Book> books = new ArrayList<Book>();
 
-    public boolean addBook(Book newBook) {
+    public void addBook(Book newBook) {
         String isbn = newBook.getIsbn();
         if (bookExists(isbn)) {
-            return false;
+            throw new BookAlreadyExistsException("A book with ISBN " + isbn + " already exists."
+            );
         }
         this.books.add(newBook);
-            return true;
     }
-
     private boolean bookExists(String isbn) {
         for (Book book : this.books) {
             if (book.getIsbn().equals(isbn)) {
@@ -33,36 +36,25 @@ public class LibraryService {
                 return book;
             }
         }
-        return null;
+        throw new BookNotFoundException("No book found with ISBN: " + isbn);
     };
-    public boolean deleteBook(String isbn){
+    public void deleteBook(String isbn){
          Book mybook = this.searchBook(isbn);
-        if (mybook == null){
-            return false;
-        }
-             return books.remove(mybook);
+          books.remove(mybook);
     };
-    public  boolean borrowBook(String isbn){
-        Book mybook = this.searchBook(isbn);
-        if (mybook == null){
-            return false;
-        }
-        if (mybook.getStatus() == BookStatus.BORROWED){
-            return false;
-        }
-        mybook.setStatus(BookStatus.BORROWED);
-        return true;
+    public  void borrowBook(String isbn){
+        Book book = searchBook(isbn);
+        if (book.getStatus() == BookStatus.BORROWED) {
+            throw new BookAlreadyBorrowedException("The book is already borrowed.");
+        };
+        book.setStatus(BookStatus.BORROWED);
     }
-    public boolean returnBook(String isbn){
+    public void returnBook(String isbn){
         Book book = this.searchBook(isbn);
-        if(book == null){
-            return  false;
-        }
         if(book.getStatus() == BookStatus.AVAILABLE){
-            return false;
+            throw new BookAlreadyAvailableException( "The book is already available.");
         }
         book.setStatus(BookStatus.AVAILABLE);
-        return true;
     }
     public  List<Book> listAllBooks(){
         return this.books;

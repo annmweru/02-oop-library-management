@@ -1,15 +1,19 @@
 package com.annmweru.library;
 
+import com.annmweru.library.exception.BookAlreadyAvailableException;
+import com.annmweru.library.exception.BookAlreadyBorrowedException;
+import com.annmweru.library.exception.BookAlreadyExistsException;
+import com.annmweru.library.exception.BookNotFoundException;
 import com.annmweru.library.model.Book;
 import com.annmweru.library.service.LibraryService;
 
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
+    private static final Scanner scanner = new Scanner(System.in);    public static void main(String[] args) {
         LibraryService library = new LibraryService();
-        Scanner scanner = new Scanner(System.in);
         System.out.println("=============================");
         System.out.println("Library Management System");
         System.out.println("=============================");
@@ -27,78 +31,73 @@ public class Main {
             System.out.println("8. List Borrowed Books");
             System.out.println("9. Exit");
             System.out.print("Enter your choice:");
-            choice = scanner.nextInt();
-            scanner.nextLine();
+            try{
+                choice = scanner.nextInt();
+                scanner.nextLine();
+            } catch (InputMismatchException e){
+                System.out.println("Invalid input. Please enter a number between 1 and 9.");
+                scanner.nextLine();
+
+            }
+
             switch (choice){
                 case 1:{
-                    System.out.print("Enter the title: ");
-                    String title = scanner.nextLine();
-                    System.out.print("Enter the author: ");
-                    String author = scanner.nextLine();
-                    System.out.print("Enter the Isbn: ");
-                    String addBookIsbn = scanner.nextLine();
+                    String title = readUserInput("Enter the title: " , "Title cannot be empty.");
+                    String author =  readUserInput("Enter the author: " , "Author cannot be empty.");
+                    String isbn =readUserInput("Enter the Isbn: " , "Isbn cannot be empty.");
 
-                    Book book = new Book(title ,author,addBookIsbn);
-                     boolean added = library.addBook(book);
-                     if(added){
-                         System.out.println("Book added successfully." + title + "," + author + ", " + addBookIsbn);
-
-                     } else {
-                         System.out.println("Book not added. A book with this ISBN already exists.");
-                     }
+                    Book book = new Book(title ,author,isbn);
+                    try{
+                        library.addBook(book);
+                        System.out.println("Book added successfully: " + book);
+                    } catch(BookAlreadyExistsException e) {
+                        System.out.println(e.getMessage());
+                    }
                     break;
                 }
                 case 2:{
-                    System.out.print("Enter the Isbn: ");
-                    String searchIsbn = scanner.nextLine();
-                    Book myBook = library.searchBook(searchIsbn);
-                    if(myBook != null){
+                    String isbn = readUserInput("Enter the ISBN: ", "ISBN cannot be empty."
+                    );
+                    try {
+                        Book myBook = library.searchBook(isbn);
                         System.out.println(myBook);
-
-                    } else {
-                        System.out.println("Book not found.");
+                    } catch (BookNotFoundException e) {
+                        System.out.println(e.getMessage());
                     }
                     break;
                 }
-
                 case 3:
                 {
-                    System.out.print("Enter the Isbn: ");
-                    String searchIsbn = scanner.nextLine();
-                    boolean isDeleted = library.deleteBook(searchIsbn);
-                    if(isDeleted){
+                    String isbn = readUserInput("Enter the ISBN: ", "ISBN cannot be empty."
+                    );
+                    try { library.deleteBook(isbn);
                         System.out.println("Book deleted successfully.");
-
-                    } else {
-                        System.out.println("Book not found.");
+                    } catch (BookNotFoundException e){
+                        System.out.println(e.getMessage());
                     }
                     break;
                 }
-
-
                 case 4:
                 {
-                    System.out.print("Enter the Isbn: ");
-                    String searchIsbn = scanner.nextLine();
-                    boolean isBorrowed = library.borrowBook(searchIsbn);
-                    if(isBorrowed){
+                    String isbn = readUserInput("Enter the ISBN: ", "ISBN cannot be empty."
+                    );
+                    try{
+                       library.borrowBook(isbn);
                         System.out.println("Book borrowed successfully.");
-
-                    } else {
-                        System.out.println("Unable to borrow the book.");
+                    } catch (BookAlreadyBorrowedException e){
+                        System.out.println(e.getMessage());
                     }
                     break;
                 }
                 case 5:
                 {
-                    System.out.print("Enter the Isbn: ");
-                    String searchIsbn = scanner.nextLine();
-                    boolean isReturned = library.returnBook(searchIsbn);
-                    if(isReturned){
+                    String isbn = readUserInput("Enter the ISBN: ", "ISBN cannot be empty."
+                    );
+                    try{
+                        library.returnBook(isbn);
                         System.out.println("Book returned successfully.");
-
-                    } else {
-                        System.out.println("Unable to return the book.");
+                    }catch (BookAlreadyAvailableException e){
+                        System.out.println(e.getMessage());
                     }
                     break;
                 }
@@ -153,5 +152,17 @@ public class Main {
                     System.out.println("Invalid choice. Please try again.");
             }
         }
+    }
+    private static  String readUserInput(String prompt, String errorMessage){
+        String input = "";
+        while(input.isBlank()){
+            System.out.print(prompt);
+            input = scanner.nextLine();
+            if(input.isBlank()){
+                System.out.println(errorMessage);
+            }
+        }
+        return input;
+
     }
 }
