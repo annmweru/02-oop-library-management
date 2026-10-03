@@ -21,21 +21,36 @@ public class Book {
     }
     public String getIsbn(){ return this.isbn;}
     public BookStatus getStatus(){ return status;}
+    public String toCsv() {
+        return title + "," + author + "," + isbn + "," + status;
+    };
+    public static Book fromCsv(String line) {
+        String[] parts = line.split(",");
 
-    public void setStatus (BookStatus status){
+        String title = parts[0];
+        String author = parts[1];
+        String isbn = parts[2];
+        BookStatus status = BookStatus.valueOf(parts[3]);
+
+        Book book = new Book(title, author, isbn);
+        book.setStatus(status);
+
+        return book;
+    };
+
+
+        public void setStatus (BookStatus status){
              this.status = status;
 
     }
 
     @Override
     public String toString(){
+        return
+                "Title  : " + title + "\n" +
+                "Author : " + author + "\n" +
+                "ISBN   : " + isbn + "\n" +
+                "Status : " + status + "\n";
 
-        return "Book{" +
-                "title='" + title + '\'' +
-                ", author='" + author + '\'' +
-                ", isbn='" + isbn + '\'' +
-                ", status=" + status +
-                '}';
-    };
-
+    }
 }
